@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Metrafors TT</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <style>
+        body {
+            position: relative;
+        }
+        .js-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(66, 66, 66, .3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .js-overlay > div {
+            display: flex;
+            align-items: center;
+        }
+        .js-overlay > div span {
+            color: #666;
+            margin-left: 12px;
+        }
+    </style>
+</head>
+<body class="m-3">
+    <div data-bind="visible: registrationMode">
+        <h1>Registration</h1>
+        <form class="row g-3 needs-validation" novalidate data-bind="submit: submitHandler">
+            <input type="text" style="display:none">
+            <input type="password" style="display:none">
+            <div class="col-12">
+                <lable class="form-label">Login</lable>
+                <input type="text" name="login" data-bind="textInput: login" class="form-control" required />
+            </div>
+            <div class="col-12">
+                <lable class="form-label">Password</lable>
+                <input type="password" name="password" data-bind="textInput: password" class="form-control" required />
+            </div>
+            <div class="col-12">
+                <lable class="form-label">Confirm password</lable>
+                <input type="password" name="confirmPassword" data-bind="textInput: confirmPassword" class="form-control" required />
+                <!-- ko if: confirmPassword() && password() !== confirmPassword() -->
+                <small class="text-danger">Пароли не совпадают!</small>
+                <!-- /ko -->
+            </div>
+            <!-- ko if: registerMessage -->
+            <div class="col-12" data-bind="text: registerMessage" style="color: #b00"></div>
+            <!-- /ko -->
+            <div class="col-12">
+                <button class="btn btn-primary" type="submit">Submit</button>
+            </div>
+        </form>
+    </div>
+    <div data-bind="visible: profileMode">
+        <h1 class="mb-3">Edit profile</h1>
+        <form class="row g-3 needs-validation" novalidate data-bind="submit: editProfileSubmitHandler">
+            <div class="row mb-3">
+                <div class="col-3">
+                    <lable class="form-label">LastName</lable>
+                    <input type="text" name="lastName" data-bind="textInput: lastName, attr : {'disabled' : identificationDisabledMode}" class="form-control" required />
+                </div>
+                <div class="col-3">
+                    <lable class="form-label">FirstName</lable>
+                    <input type="text" name="firstName" data-bind="textInput: firstName, attr : {'disabled' : identificationDisabledMode}" class="form-control" required />
+                </div>
+                <div class="col-3">
+                    <lable class="form-label">Patronymic</lable>
+                    <input type="text" name="patronymic" data-bind="textInput: patronymic, attr : {'disabled' : identificationDisabledMode}" class="form-control" required />
+                </div>
+                <div class="col-3">
+                    <lable class="form-label">Inn</lable>
+                    <input type="text" name="inn" data-bind="textInput: inn, attr : {'disabled' : identificationDisabledMode}" class="form-control" required />
+                    <small class="text-danger" data-bind='visible: inn.hasError, text: inn.validationMessage'></small>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-2">
+                    <lable class="form-label">Passport series</lable>
+                    <input type="text" name="passportSeries" data-bind="textInput: passportSeries, attr : {'disabled' : identificationDisabledMode}" class="form-control" required />
+                </div>
+                <div class="col-2">
+                    <lable class="form-label">Passport number</lable>
+                    <input type="text" name="passportNumber" data-bind="textInput: passportNumber, attr : {'disabled' : identificationDisabledMode}" class="form-control" required />
+                </div>
+                <div class="col-6">
+                    <lable class="form-label">Passport issued who</lable>
+                    <input type="text" name="passportWho" data-bind="textInput: passportWho, attr : {'disabled' : identificationDisabledMode}" class="form-control" required />
+                </div>
+                <div class="col-2">
+                    <lable class="form-label">Passport issued when</lable>
+                    <input type="text" name="passportWhen" data-bind="textInput: passportWhen, attr : {'disabled' : identificationDisabledMode}" class="form-control" required />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-2">
+                    <lable class="form-label">Phone</lable>
+                    <input type="text" name="phone" id="phone" 
+                        data-bind="value: phone, masked: phone, mask: '+7 (000) 000-00-00', attr : {'disabled' : identificationDisabledMode}"
+                        class="form-control" placeholder="+7 (916) 123-45-67" required />
+                </div>
+                <div class="col-8">
+                    <div class="row">
+                        <div class="col-3">
+                            <lable class="form-label">Address city</lable>
+                            <input type="text" name="addressCity" data-bind="textInput: addressCity, attr : {'disabled' : identificationDisabledMode}" class="form-control" required />
+                        </div>
+                        <div class="col-6">
+                            <lable class="form-label">Address street</lable>
+                            <input type="text" name="addressStreet" data-bind="textInput: addressStreet, attr : {'disabled' : identificationDisabledMode}" class="form-control" required />
+                        </div>
+                        <div class="col-3">
+                            <lable class="form-label">Address house</lable>
+                            <input type="text" name="addressHouse" data-bind="textInput: addressHouse, attr : {'disabled' : identificationDisabledMode}" class="form-control" required />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12" data-bind="text: addressFull">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-2">
+                    <lable class="form-label">Position</lable>
+                    <select class="form-select" data-bind="value: position, attr : {'disabled' : identificationDisabledMode}">
+                        <option>Директор</option>
+                        <option>Бухгалтер</option>
+                        <option>Доверенное лицо</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-12">
+                <span data-bind="visible: identificationProcessMode" style="color: #146">Идет процесс идентификации</span>
+                <span data-bind="visible: identificationSuccessMode" style="color: #0b0">Идентификация успешно завершена</span>
+                <span data-bind="visible: identificationErrorMode" style="color: #b00">Идентификация завершилась с ошибкой</span>
+                <button class="btn btn-primary" type="submit" data-bind="visible: identificationEditMode">Identification</button>
+            </div>
+            <!-- ko if: identificationMessage -->
+            <div class="col-12" data-bind="text: identificationMessage" style="color: #b00"></div>
+            <!-- /ko -->
+        </form>
+    </div>
+    <!-- ko if: loading -->
+    <div class="js-overlay">
+        <div>
+            <i class="spinner-grow"></i>
+            <span>Loading...</span>
+        </div>
+    </div>
+    <!-- /ko -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" 
+        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.6.3.min.js"
+            integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+    <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/knockout/knockout-3.5.0.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
+    <script>
+        const hubConnection = new signalR.HubConnectionBuilder()
+            .withUrl("https://localhost:7091/identity")
+            // .withUrl("http://metrafor-api.avbocharnikov.ru/identity")
+            .build();
+
+        ko.extenders.innValidation = function(target) {
+            target.hasError = ko.observable();
+            target.validationMessage = ko.observable();
+        
+            function validate(newValue) {
+                target.hasError(newValue && newValue.length !== 10 && newValue.length !== 12);
+                target.validationMessage(target.hasError() ? "Inn length 10 or 12 chars" : "");
+            }
+        
+            validate(target());
+        
+            target.subscribe(validate);
+        
+            return target;
+        };
+
+        ko.bindingHandlers.masked = {
+            init: function (element, valueAccessor, allBindingsAccessor) {
+                var mask = allBindingsAccessor().mask || {};
+                $(element).mask(mask);
+                ko.utils.registerEventHandler(element, 'focusout', function () {
+                    var observable = valueAccessor();
+                    observable($(element).val());
+                });
+            },
+            update: function (element, valueAccessor) {
+                var value = ko.utils.unwrapObservable(valueAccessor());
+                $(element).val(value);
+                $(element).trigger('blur');
+            }
+        };
+
+        function IdentityViewModel() {
+            const self = this;
+
+            self.registerMessage = ko.observable(undefined);
+            self.identificationMessage = ko.observable(undefined);
+
+            self.mode = ko.observable('registration');
+            self.identificationMode = ko.observable('edit');
+            self.loading = ko.observable(true);
+            self.login = ko.observable();
+            self.password = ko.observable();
+            self.confirmPassword = ko.observable();
+
+            self.userId = ko.observable();
+
+            self.lastName = ko.observable();
+            self.firstName = ko.observable();
+            self.patronymic = ko.observable();
+            self.inn = ko.observable().extend({ innValidation: "" });;
+
+            self.passportSeries = ko.observable();
+            self.passportNumber = ko.observable();
+            self.passportWho = ko.observable();
+            self.passportWhen = ko.observable();
+
+            self.phone = ko.observable();
+            self.addressCity = ko.observable();
+            self.addressStreet = ko.observable();
+            self.addressHouse = ko.observable();
+            self.position = ko.observable();
+
+            self.registrationMode = ko.computed(function() {
+                return self.mode() === 'registration';
+            });
+
+            self.identificationEditMode = ko.computed(function() {
+                return self.identificationMode() === 'edit';
+            });
+
+            self.identificationDisabledMode = ko.computed(function() {
+                return self.identificationMode() !== 'edit';
+            });
+
+            self.identificationProcessMode = ko.computed(function() {
+                return self.identificationMode() === 'process';
+            });
+
+            self.identificationSuccessMode = ko.computed(function() {
+                return self.identificationMode() === 'success';
+            });
+
+            self.identificationErrorMode = ko.computed(function() {
+                return self.identificationMode() === 'error';
+            });
+
+            self.addressFull = ko.computed(function() {
+                return [self.addressCity(), self.addressStreet(), self.addressHouse()].filter(x => !!x).join(', ');
+            });
+
+            self.profileMode = ko.computed(function() {
+                return self.mode() === 'profile';
+            });
+
+            self.submitHandler = function (form) {
+                form.classList.add('was-validated');
+
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    return false;
+                }
+
+                const login = form.elements["login"].value;
+                const password = form.elements["password"].value;
+                const confirmPassword = form.elements["confirmPassword"].value;
+
+                if (password !== confirmPassword)
+                    return false;
+
+                self.loading(true);
+                hubConnection.invoke("Register", { login, password })
+                    .catch(function (err) {
+                        self.loading(false);
+                        return console.error(err.toString());
+                    });
+                
+                return false;
+            }
+
+            self.editProfileSubmitHandler = function (form) {
+                form.classList.add('was-validated');
+
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    return false;
+                }
+
+                const req = {
+                    personId: self.userId(),
+
+                    lastName: form.elements["lastName"].value,
+                    firstName: form.elements["firstName"].value,
+                    patronymic: form.elements["patronymic"].value,
+                    inn: form.elements["inn"].value,
+
+                    passportSeries: form.elements["passportSeries"].value,
+                    passportNumber: form.elements["passportNumber"].value,
+                    passportWho: form.elements["passportWho"].value,
+                    passportWhen: form.elements["passportWhen"].value,
+
+                    phone: form.elements["phone"].value,
+                    addressCity: form.elements["addressCity"].value,
+                    addressStreet: form.elements["addressStreet"].value,
+                    addressHouse: form.elements["addressHouse"].value,
+                    position: self.position()
+                };
+
+                self.loading(true);
+                self.identificationMode('process');
+                hubConnection.invoke("Identification", req)
+                    .catch(function (err) {
+                        self.loading(false);
+                        return console.error(err.toString());
+                    });
+                
+                return false;
+            }
+        };
+        
+        const identityViewModel = new IdentityViewModel();
+        ko.applyBindings(identityViewModel);        
+ 
+        hubConnection.start()
+            .then(function () {
+                identityViewModel.loading(false);
+            })
+            .catch(function (err) {
+                return console.error(err.toString());
+            });
+
+        hubConnection.on("RegisterReceive", function(response) {
+            if (response.success) {
+                identityViewModel.mode('profile');
+                identityViewModel.userId(response.userId);
+            } else {
+                identityViewModel.registerMessage(response.displayMessage || 'Увы, произошла ошибка');
+            }
+            identityViewModel.loading(false);
+        });
+
+        hubConnection.on("IdentificationReceive", function(message) {
+            if (message.success) {
+                identityViewModel.identificationMode('success');
+            } else {
+                identityViewModel.identificationMode('error');
+                identityViewModel.identificationMessage(message.displayMessage || 'Увы, произошла ошибка');
+            }
+            identityViewModel.loading(false);
+        });
+    </script>
+</body>
+</html>
